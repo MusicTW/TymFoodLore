@@ -1,56 +1,58 @@
 # TymFoodLore
 
-TymFoodLore is a Paper plugin for TymHaven. It adds readable food lore to vanilla and ItemsAdder foods, including nutrition, saturation, and potion-style effects.
+TymFoodLore 是 TymHaven 使用的 Paper 插件，用來替原版食物與 ItemsAdder 自訂食物補上清楚的食物說明。它會顯示飽食度、飽和度與特殊效果，並可選擇把指定的 ItemsAdder 食物接到 Codex 食物圖鑑解鎖流程。
 
-## Features
+插件本體以 Kotlin 撰寫，發布 jar 會內含 Kotlin runtime，伺服器不需要另外安裝 Kotlin 前置插件。
 
-- Adds configurable lore to vanilla foods and ItemsAdder foods.
-- Reads ItemsAdder food data from `plugins/ItemsAdder/contents`.
-- Normalizes player inventory items after pickup, crafting, inventory movement, joins, held-item changes, and periodic scans.
-- Optionally unlocks Codex food discoveries when mapped ItemsAdder foods are consumed.
-- Writes LuckPerms flags for Codex unlock tracking.
+## 功能
 
-## Commands
+- 替原版食物與 ItemsAdder 食物加入可設定的 lore。
+- 從 `plugins/ItemsAdder/contents` 讀取 ItemsAdder 食物資料。
+- 在玩家撿起物品、合成、熔爐取出、背包移動、登入、切換手持物品與週期掃描時，自動整理食物 lore。
+- 可在玩家食用指定 ItemsAdder 食物時，自動解鎖 Codex 食物圖鑑。
+- 可寫入 LuckPerms 權限旗標，避免同一個 Codex 條目重複觸發。
 
-- `/tymfoodlore status` - Shows plugin state, ItemsAdder entry count, Codex mapping count, and vanilla-food state.
-- `/tymfoodlore reload` - Reloads config and rescans online player inventories.
-- `/tymfoodlore scan` - Rescans online player inventories.
+## 指令
 
-Permission: `tymfoodlore.admin`
+- `/tymfoodlore status` - 查看插件狀態、ItemsAdder 食物數量、Codex 對應數量與原版食物狀態。
+- `/tymfoodlore reload` - 重新載入設定，並掃描線上玩家背包。
+- `/tymfoodlore scan` - 掃描線上玩家背包。
 
-## Build
+權限：`tymfoodlore.admin`
 
-Requirements:
+## 建置
+
+需求：
 
 - Java 21
 - PowerShell
-- Internet access for the first Gradle download
+- 第一次下載 Gradle 時需要網路連線
 
-Build on Windows:
+Windows 建置：
 
 ```powershell
 .\build.ps1
 ```
 
-The compiled jar is created under `build/libs/`.
+編譯完成的 jar 會輸出到 `build/libs/`。
 
-## Server Deployment
+## 伺服器部署
 
-1. Stop or restart the server during deployment.
-2. Copy the built jar into the server `plugins` folder.
-3. Keep only one TymFoodLore jar active in `plugins`.
-4. Start the server and run `/tymfoodlore status`.
+1. 部署時先停止或重啟伺服器。
+2. 將編譯完成的 jar 複製到伺服器 `plugins` 資料夾。
+3. `plugins` 內只保留一個啟用中的 TymFoodLore jar。
+4. 啟動伺服器後執行 `/tymfoodlore status` 確認狀態。
 
-## Optional Integrations
+## 可選整合
 
-`plugin.yml` declares soft dependencies for:
+`plugin.yml` 宣告了以下 soft depend：
 
 - ItemsAdder
 - Codex
 - LuckPerms
 
-Codex unlocks are controlled by the `codex:` section in `config.yml`. Only mapped ItemsAdder food IDs are unlocked.
+Codex 解鎖由 `config.yml` 內的 `codex:` 區塊控制。只有列在 `codex.itemsadder-food-discoveries` 的 ItemsAdder 食物 ID 會觸發圖鑑解鎖。
 
-## License
+## 授權
 
-MIT License. See [LICENSE](LICENSE).
+MIT License。詳見 [LICENSE](LICENSE)。
