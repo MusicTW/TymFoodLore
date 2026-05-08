@@ -50,3 +50,7 @@ The compiled jar is created under `build/libs/`.
 - LuckPerms
 
 Codex unlocks are controlled by the `codex:` section in `config.yml`. Only mapped ItemsAdder food IDs are unlocked.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
