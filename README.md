@@ -43,15 +43,29 @@ Windows 建置：
 3. `plugins` 內只保留一個啟用中的 TymFoodLore jar。
 4. 啟動伺服器後執行 `/tymfoodlore status` 確認狀態。
 
-## 可選整合
+## 支援與相容插件
 
-`plugin.yml` 宣告了以下 soft depend：
+TymFoodLore 以 Paper 伺服器為目標，並可選擇整合下列插件：
 
-- ItemsAdder
-- Codex
-- LuckPerms
+- [Paper](https://papermc.io/) / [Paper Docs](https://docs.papermc.io/) - 目標伺服器平台與 API。
+- [ItemsAdder](https://itemsadder.com/) / [ItemsAdder Wiki](https://itemsadder.devs.beer/) - 讀取自訂食物資料，替 ItemsAdder 食物補上 lore。
+- [Codex | RPG Discoveries](https://www.spigotmc.org/resources/codex-rpg-discoveries-1-16-5-1-21-9.90371/) / [Codex Wiki](https://ajneb97.gitbook.io/codex) - 食用指定 ItemsAdder 食物時解鎖食物圖鑑 discovery。
+- [LuckPerms](https://luckperms.net/) / [LuckPerms GitHub](https://github.com/LuckPerms/LuckPerms) - 寫入解鎖旗標，避免同一個 discovery 重複觸發。
 
-Codex 解鎖由 `config.yml` 內的 `codex:` 區塊控制。只有列在 `codex.itemsadder-food-discoveries` 的 ItemsAdder 食物 ID 會觸發圖鑑解鎖。
+`plugin.yml` 內對 ItemsAdder、Codex、LuckPerms 使用 soft depend，因此這些整合是可選功能。Codex 解鎖由 `config.yml` 內的 `codex:` 區塊控制，只有列在 `codex.itemsadder-food-discoveries` 的 ItemsAdder 食物 ID 會觸發圖鑑解鎖。
+
+## 開發與產生方式
+
+這個專案是由 OpenAI Codex 依照 TymHaven 伺服器需求協助產生、重構與整理的開源插件，也就是常說的 vibe coding 工作流。
+
+實際流程不是單純要求 AI 一次產出完整插件，而是：
+
+1. 先讀取 live server 的插件設定、Codex 圖鑑、ItemsAdder 食物資料與既有行為。
+2. 由人決定要整合的玩法目標與風格，例如食物 lore、Codex 食物圖鑑與 LuckPerms 解鎖旗標。
+3. 由 Codex 協助撰寫 Kotlin 程式、Gradle 設定、README、CHANGELOG 與 GitHub release 內容。
+4. 每次修改後都以實際 build、YAML 解析、jar 內容檢查與 live server 部署檢查做驗證。
+
+因此，本專案可以視為 AI-assisted / Codex-generated 的 vibe coding 作品；程式碼公開是為了讓使用者能檢查、修改與延伸，而不是把它包裝成手寫閉源插件。
 
 ## 授權
 
