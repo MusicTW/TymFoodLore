@@ -1,0 +1,100 @@
+enabled: true
+
+vanilla:
+  enabled: true
+  use-paper-data-components: true
+  # 避免 ItemsAdder 物品在 IA API 尚未就緒時被當成原版食物。
+  skip-items-with-custom-model-data: true
+  # 這類物品的效果本來就帶有未知感，只顯示有隱藏效果，不直接揭露內容。
+  hidden-effect-materials:
+    - SUSPICIOUS_STEW
+
+itemsadder:
+  enabled: true
+  contents-path: plugins/ItemsAdder/contents
+  # 啟動後再掃一次，等 ItemsAdder 完成載入。
+  delayed-rescan-seconds: 8
+
+codex:
+  enabled: true
+  category: food
+  flag-prefix: codex.flag.food_
+  notify: true
+  # 只把已經放進 Codex 食物圖鑑第二頁的自訂料理解鎖，避免未建條目的食物刷錯誤。
+  itemsadder-food-discoveries:
+    - item: iasurvival:tomato
+      discovery: ia_iasurvival_tomato
+    - item: iasurvival:cheese
+      discovery: ia_iasurvival_cheese
+    - item: iasurvival:sliced_bread
+      discovery: ia_iasurvival_sliced_bread
+    - item: iasurvival:cod_nigiri
+      discovery: ia_iasurvival_cod_nigiri
+    - item: iasurvival:hotdog
+      discovery: ia_iasurvival_hotdog
+    - item: iasurvival:hamburger
+      discovery: ia_iasurvival_hamburger
+    - item: iasurvival:pizza
+      discovery: ia_iasurvival_pizza
+    - item: iasurvival:taco
+      discovery: ia_iasurvival_taco
+    - item: iasurvival:nether_donut
+      discovery: ia_iasurvival_nether_donut
+    - item: blossom_studios:honey_cookie
+      discovery: ia_blossom_studios_honey_cookie
+    - item: blossom_studios:fruit_juice
+      discovery: ia_blossom_studios_fruit_juice
+    - item: blossom_studios:potato_croquettes
+      discovery: ia_blossom_studios_potato_croquettes
+    - item: blossom_studios:pork_sandwich
+      discovery: ia_blossom_studios_pork_sandwich
+    - item: blossom_studios:grilled_salmon
+      discovery: ia_blossom_studios_grilled_salmon
+    - item: blossom_studios:apple_pie
+      discovery: ia_blossom_studios_apple_pie
+    - item: blossom_studios:mushroom_soup_deluxe
+      discovery: ia_blossom_studios_mushroom_soup_deluxe
+    - item: blossom_studios:golden_carrot_salad
+      discovery: ia_blossom_studios_golden_carrot_salad
+    - item: blossom_studios:steak_burger
+      discovery: ia_blossom_studios_steak_burger
+    - item: blossom_studios:beef_stew_deluxe
+      discovery: ia_blossom_studios_beef_stew_deluxe
+
+normalization:
+  run-on-join: true
+  run-on-pickup: true
+  run-on-inventory-click: true
+  run-on-craft: true
+  run-on-furnace-extract: true
+  periodic-online-player-scan-seconds: 180
+
+display:
+  # top = 放在原 lore 前面；bottom = 保留原 lore 後再補食物資訊。
+  position: bottom
+  blank-line-before: false
+  header: ''
+  title: '<italic:false><#f6c35b>✦ 食用屬性'
+  nutrition-line: '<italic:false><#cfc6b8>飽食 <#ffffff>%nutrition% <#6f675c>│ <#cfc6b8>飽和 <#ffffff>%saturation%'
+  saturation-line: ''
+  effect-line: '<italic:false><#cfc6b8>效果 <#f2e6c8>%effect%'
+  extra-effect-line: '<italic:false><#cfc6b8>效果 <#f2e6c8>%effect%'
+  no-effect: '無'
+  hidden-effect: '食用後觸發神祕狀態'
+  unknown: '未設定'
+
+language:
+  effects:
+    minecraft:night_vision: 夜視
+    minecraft:regeneration: 回復
+    minecraft:speed: 速度
+    minecraft:luck: 幸運
+    minecraft:absorption: 吸收
+    minecraft:resistance: 抗性提升
+    minecraft:fire_resistance: 抗火
+    minecraft:hunger: 飢餓
+    minecraft:nausea: 反胃
+    minecraft:poison: 中毒
+    minecraft:clear_all_status_effects: 清除所有狀態效果
+    minecraft:remove_status_effects: 移除狀態效果
+    minecraft:teleport_randomly: 隨機傳送

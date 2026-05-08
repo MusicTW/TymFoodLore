@@ -1,0 +1,23 @@
+name: TymFoodLore
+version: 1.1.0
+main: club.timehut.foodlore.TymFoodLorePlugin
+api-version: '1.21'
+author: TymHaven
+description: 為原版與 ItemsAdder 食物自動補上飽食度、飽和度與特殊效果顯示。
+softdepend:
+  - ItemsAdder
+  - Codex
+  - LuckPerms
+
+commands:
+  tymfoodlore:
+    description: 管理 TymFoodLore 食物屬性顯示。
+    usage: /<command> [status|reload|scan]
+    permission: tymfoodlore.admin
+    aliases:
+      - tfl
+
+permissions:
+  tymfoodlore.admin:
+    description: 允許管理 TymFoodLore。
+    default: op

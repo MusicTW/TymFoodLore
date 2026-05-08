@@ -1,0 +1,15 @@
+.gradle/
+.gradle-dist/
+build/
+out/
+
+*.class
+*.log
+*.jar
+
+.idea/
+.vscode/
+*.iml
+
+Thumbs.db
+desktop.ini
