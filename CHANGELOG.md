@@ -1,5 +1,16 @@
 # 更新紀錄
 
+## 1.2.3 - 2026-05-08
+
+### 修正
+- Codex 食物解鎖重複判斷改成優先讀取 Codex API 的 discovery 狀態；`/codex resetplayer` 後不會再被舊 LuckPerms flag 或 OP 權限判斷擋住。
+- ItemsAdder 右鍵 fallback 會先確認物品數量、飽食度或飽和度真的有變化，避免只是右鍵就解鎖 Codex。
+
+## 1.2.2 - 2026-05-08
+
+### 修正
+- Codex 食物解鎖判斷改成只檢查 LuckPerms 中實際存在的精確 flag，避免 OP 測試帳號被 Bukkit 預設權限誤判為已解鎖。
+
 ## 1.2.1 - 2026-05-08
 
 ### 修正

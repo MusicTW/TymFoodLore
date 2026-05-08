@@ -216,7 +216,28 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             return
         }
 
-        runLater({ unlockCodexFood(event.player, info) }, 1L)
+        val player = event.player
+        val beforeAmount = item.amount
+        val beforeFoodLevel = player.foodLevel
+        val beforeSaturation = player.saturation
+
+        runLater({
+            if (!player.isOnline) {
+                return@runLater
+            }
+
+            val current = player.inventory.itemInMainHand
+            val currentInfo = resolveItemsAdderFoodInfo(current)
+            val itemChanged = current.type.isAir ||
+                currentInfo?.id?.equals(info.id, ignoreCase = true) != true ||
+                current.amount < beforeAmount
+            val foodChanged = player.foodLevel > beforeFoodLevel ||
+                player.saturation > beforeSaturation + 0.01f
+
+            if (itemChanged || foodChanged) {
+                unlockCodexFood(player, info)
+            }
+        }, 2L)
     }
 
     private fun loadSettings() {
@@ -501,7 +522,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         }
         val discovery = codexItemsAdderDiscoveries[info.id.lowercase(Locale.ROOT)] ?: return
         val flag = codexFlagPrefix + discovery
-        if (player.hasPermission(flag)) {
+        if (hasCodexDiscovery(player, discovery, flag)) {
             return
         }
 
@@ -518,6 +539,31 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             "Codex 食物解鎖請求: player=${player.name}, item=${info.id}, discovery=$discovery, " +
                 "codexCommand=$codexCommand, luckPermsCommand=$luckPermsCommand",
         )
+    }
+
+    private fun hasCodexDiscovery(player: Player, discovery: String, fallbackFlag: String): Boolean {
+        return try {
+            val api = Class.forName("cx.ajneb97.api.CodexAPI")
+            val method = api.getMethod(
+                "hasDiscovery",
+                Player::class.java,
+                String::class.java,
+                String::class.java,
+            )
+            method.invoke(null, player, codexCategory, discovery) as? Boolean ?: false
+        } catch (_: ReflectiveOperationException) {
+            hasExactPermissionFlag(player, fallbackFlag)
+        } catch (_: LinkageError) {
+            hasExactPermissionFlag(player, fallbackFlag)
+        } catch (_: RuntimeException) {
+            hasExactPermissionFlag(player, fallbackFlag)
+        }
+    }
+
+    private fun hasExactPermissionFlag(player: Player, flag: String): Boolean {
+        return player.effectivePermissions.any { attachment ->
+            attachment.value && attachment.permission.equals(flag, ignoreCase = true)
+        }
     }
 
     private fun resolveFoodInfo(item: ItemStack): FoodInfo? {
