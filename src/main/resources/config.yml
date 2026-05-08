@@ -20,46 +20,178 @@ codex:
   category: food
   flag-prefix: codex.flag.food_
   notify: true
-  # 只把已經放進 Codex 食物圖鑑第二頁的自訂料理解鎖，避免未建條目的食物刷錯誤。
+  # ?????? Codex ?????????????????????????
   itemsadder-food-discoveries:
-    - item: iasurvival:tomato
-      discovery: ia_iasurvival_tomato
-    - item: iasurvival:cheese
-      discovery: ia_iasurvival_cheese
-    - item: iasurvival:sliced_bread
-      discovery: ia_iasurvival_sliced_bread
-    - item: iasurvival:cod_nigiri
-      discovery: ia_iasurvival_cod_nigiri
-    - item: iasurvival:hotdog
-      discovery: ia_iasurvival_hotdog
-    - item: iasurvival:hamburger
-      discovery: ia_iasurvival_hamburger
-    - item: iasurvival:pizza
-      discovery: ia_iasurvival_pizza
-    - item: iasurvival:taco
-      discovery: ia_iasurvival_taco
-    - item: iasurvival:nether_donut
-      discovery: ia_iasurvival_nether_donut
-    - item: blossom_studios:honey_cookie
-      discovery: ia_blossom_studios_honey_cookie
-    - item: blossom_studios:fruit_juice
-      discovery: ia_blossom_studios_fruit_juice
-    - item: blossom_studios:potato_croquettes
-      discovery: ia_blossom_studios_potato_croquettes
-    - item: blossom_studios:pork_sandwich
-      discovery: ia_blossom_studios_pork_sandwich
-    - item: blossom_studios:grilled_salmon
-      discovery: ia_blossom_studios_grilled_salmon
+    - item: blossom_studios:apple_donut
+      discovery: ia_blossom_studios_apple_donut
     - item: blossom_studios:apple_pie
       discovery: ia_blossom_studios_apple_pie
-    - item: blossom_studios:mushroom_soup_deluxe
-      discovery: ia_blossom_studios_mushroom_soup_deluxe
-    - item: blossom_studios:golden_carrot_salad
-      discovery: ia_blossom_studios_golden_carrot_salad
-    - item: blossom_studios:steak_burger
-      discovery: ia_blossom_studios_steak_burger
+    - item: blossom_studios:bacon_and_eggs
+      discovery: ia_blossom_studios_bacon_and_eggs
+    - item: blossom_studios:baked_potato_cheese
+      discovery: ia_blossom_studios_baked_potato_cheese
     - item: blossom_studios:beef_stew_deluxe
       discovery: ia_blossom_studios_beef_stew_deluxe
+    - item: blossom_studios:beetroot_salad
+      discovery: ia_blossom_studios_beetroot_salad
+    - item: blossom_studios:berry_smoothie
+      discovery: ia_blossom_studios_berry_smoothie
+    - item: blossom_studios:berry_tart
+      discovery: ia_blossom_studios_berry_tart
+    - item: blossom_studios:caramel_apple
+      discovery: ia_blossom_studios_caramel_apple
+    - item: blossom_studios:chocolate_cake_slice
+      discovery: ia_blossom_studios_chocolate_cake_slice
+    - item: blossom_studios:fish_and_chips
+      discovery: ia_blossom_studios_fish_and_chips
+    - item: blossom_studios:fruit_juice
+      discovery: ia_blossom_studios_fruit_juice
+    - item: blossom_studios:golden_bread
+      discovery: ia_blossom_studios_golden_bread
+    - item: blossom_studios:golden_carrot_salad
+      discovery: ia_blossom_studios_golden_carrot_salad
+    - item: blossom_studios:grilled_salmon
+      discovery: ia_blossom_studios_grilled_salmon
+    - item: blossom_studios:honey_cookie
+      discovery: ia_blossom_studios_honey_cookie
+    - item: blossom_studios:honey_glazed_ham
+      discovery: ia_blossom_studios_honey_glazed_ham
+    - item: blossom_studios:honey_tea
+      discovery: ia_blossom_studios_honey_tea
+    - item: blossom_studios:honeycomb_bar
+      discovery: ia_blossom_studios_honeycomb_bar
+    - item: blossom_studios:hot_cocoa
+      discovery: ia_blossom_studios_hot_cocoa
+    - item: blossom_studios:meat_pie
+      discovery: ia_blossom_studios_meat_pie
+    - item: blossom_studios:mushroom_soup_deluxe
+      discovery: ia_blossom_studios_mushroom_soup_deluxe
+    - item: blossom_studios:pork_sandwich
+      discovery: ia_blossom_studios_pork_sandwich
+    - item: blossom_studios:potato_croquettes
+      discovery: ia_blossom_studios_potato_croquettes
+    - item: blossom_studios:pumpkin_casserole
+      discovery: ia_blossom_studios_pumpkin_casserole
+    - item: blossom_studios:pumpkin_muffin
+      discovery: ia_blossom_studios_pumpkin_muffin
+    - item: blossom_studios:roast_chicken
+      discovery: ia_blossom_studios_roast_chicken
+    - item: blossom_studios:seaweed_salad
+      discovery: ia_blossom_studios_seaweed_salad
+    - item: blossom_studios:sniffer_fruit_bowl
+      discovery: ia_blossom_studios_sniffer_fruit_bowl
+    - item: blossom_studios:steak_burger
+      discovery: ia_blossom_studios_steak_burger
+    - item: blossom_studios:stuffed_rabbit
+      discovery: ia_blossom_studios_stuffed_rabbit
+    - item: blossom_studios:sweet_corn_bowl
+      discovery: ia_blossom_studios_sweet_corn_bowl
+    - item: blossom_studios:sweetberry_pancake
+      discovery: ia_blossom_studios_sweetberry_pancake
+    - item: blossom_studios:vegetable_wrap
+      discovery: ia_blossom_studios_vegetable_wrap
+    - item: blossom_studios:veggie_stew
+      discovery: ia_blossom_studios_veggie_stew
+    - item: iasurvival:blue_parrotfish
+      discovery: ia_iasurvival_blue_parrotfish
+    - item: iasurvival:black_moor_goldfish
+      discovery: ia_iasurvival_black_moor_goldfish
+    - item: iasurvival:cooked_blue_parrotfish
+      discovery: ia_iasurvival_cooked_blue_parrotfish
+    - item: iasurvival:cooked_black_moor_goldfish
+      discovery: ia_iasurvival_cooked_black_moor_goldfish
+    - item: iasurvival:cod_nigiri
+      discovery: ia_iasurvival_cod_nigiri
+    - item: iasurvival:cooked_green_sunfish
+      discovery: ia_iasurvival_cooked_green_sunfish
+    - item: iasurvival:cooked_goldfish
+      discovery: ia_iasurvival_cooked_goldfish
+    - item: iasurvival:cooked_tuna
+      discovery: ia_iasurvival_cooked_tuna
+    - item: iasurvival:goldfish
+      discovery: ia_iasurvival_goldfish
+    - item: iasurvival:green_sunfish
+      discovery: ia_iasurvival_green_sunfish
+    - item: iasurvival:pufferfish_nigiri
+      discovery: ia_iasurvival_pufferfish_nigiri
+    - item: iasurvival:tropical_fish_nigiri
+      discovery: ia_iasurvival_tropical_fish_nigiri
+    - item: iasurvival:tuna
+      discovery: ia_iasurvival_tuna
+    - item: iasurvival:salmon_nigiri
+      discovery: ia_iasurvival_salmon_nigiri
+    - item: iasurvival:banana
+      discovery: ia_iasurvival_banana
+    - item: iasurvival:chili_pepper
+      discovery: ia_iasurvival_chili_pepper
+    - item: iasurvival:garlic
+      discovery: ia_iasurvival_garlic
+    - item: iasurvival:lettuce
+      discovery: ia_iasurvival_lettuce
+    - item: iasurvival:pear
+      discovery: ia_iasurvival_pear
+    - item: iasurvival:rice
+      discovery: ia_iasurvival_rice
+    - item: iasurvival:tomato
+      discovery: ia_iasurvival_tomato
+    - item: iasurvival:baguette
+      discovery: ia_iasurvival_baguette
+    - item: iasurvival:broken_egg
+      discovery: ia_iasurvival_broken_egg
+    - item: iasurvival:cheese
+      discovery: ia_iasurvival_cheese
+    - item: iasurvival:chips
+      discovery: ia_iasurvival_chips
+    - item: iasurvival:cooked_donut_base
+      discovery: ia_iasurvival_cooked_donut_base
+    - item: iasurvival:cooked_sausage
+      discovery: ia_iasurvival_cooked_sausage
+    - item: iasurvival:donut_base
+      discovery: ia_iasurvival_donut_base
+    - item: iasurvival:french_fries
+      discovery: ia_iasurvival_french_fries
+    - item: iasurvival:fried_egg
+      discovery: ia_iasurvival_fried_egg
+    - item: iasurvival:fried_potato_sticks
+      discovery: ia_iasurvival_fried_potato_sticks
+    - item: iasurvival:hamburger
+      discovery: ia_iasurvival_hamburger
+    - item: iasurvival:hotdog
+      discovery: ia_iasurvival_hotdog
+    - item: iasurvival:nether_donut
+      discovery: ia_iasurvival_nether_donut
+    - item: iasurvival:peeled_potato
+      discovery: ia_iasurvival_peeled_potato
+    - item: iasurvival:pink_donut
+      discovery: ia_iasurvival_pink_donut
+    - item: iasurvival:pizza
+      discovery: ia_iasurvival_pizza
+    - item: iasurvival:potato_sticks
+      discovery: ia_iasurvival_potato_sticks
+    - item: iasurvival:sausage
+      discovery: ia_iasurvival_sausage
+    - item: iasurvival:sliced_baguette
+      discovery: ia_iasurvival_sliced_baguette
+    - item: iasurvival:sliced_bread
+      discovery: ia_iasurvival_sliced_bread
+    - item: iasurvival:sliced_bread_with_apple_jam
+      discovery: ia_iasurvival_sliced_bread_with_apple_jam
+    - item: iasurvival:sliced_bread_with_pear_jam
+      discovery: ia_iasurvival_sliced_bread_with_pear_jam
+    - item: iasurvival:sliced_bread_with_sweet_berries_jam
+      discovery: ia_iasurvival_sliced_bread_with_sweet_berries_jam
+    - item: iasurvival:sliced_cheese
+      discovery: ia_iasurvival_sliced_cheese
+    - item: iasurvival:sliced_raw_beef
+      discovery: ia_iasurvival_sliced_raw_beef
+    - item: iasurvival:sliced_roast_beef
+      discovery: ia_iasurvival_sliced_roast_beef
+    - item: iasurvival:sweet
+      discovery: ia_iasurvival_sweet
+    - item: iasurvival:sweet_stick
+      discovery: ia_iasurvival_sweet_stick
+    - item: iasurvival:taco
+      discovery: ia_iasurvival_taco
 
 normalization:
   run-on-join: true

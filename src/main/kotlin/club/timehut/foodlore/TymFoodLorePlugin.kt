@@ -14,6 +14,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.event.block.Action
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
@@ -23,9 +24,11 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
@@ -198,6 +201,24 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         unlockCodexFood(event.player, info)
     }
 
+    @EventHandler
+    fun onInteract(event: PlayerInteractEvent) {
+        if (!codexEnabled || !itemsAdderEnabled || event.hand != EquipmentSlot.HAND) {
+            return
+        }
+        if (event.action != Action.RIGHT_CLICK_AIR && event.action != Action.RIGHT_CLICK_BLOCK) {
+            return
+        }
+
+        val item = event.item ?: return
+        val info = resolveItemsAdderFoodInfo(item) ?: return
+        if (!codexItemsAdderDiscoveries.containsKey(info.id.lowercase(Locale.ROOT))) {
+            return
+        }
+
+        runLater({ unlockCodexFood(event.player, info) }, 1L)
+    }
+
     private fun loadSettings() {
         pluginEnabled = config.getBoolean("enabled", true)
         vanillaEnabled = config.getBoolean("vanilla.enabled", true)
@@ -312,7 +333,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             val base = "items.$itemId"
             val info = readItemsAdderFoodInfo("$namespace:$itemId", yaml, base)
             if (info != null) {
-                itemsAdderFood[info.id] = info
+                itemsAdderFood[info.id.lowercase(Locale.ROOT)] = info
             }
         }
     }
@@ -485,22 +506,24 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         }
 
         val notify = if (codexNotify) " true" else " false"
-        Bukkit.dispatchCommand(
+        val codexCommand = Bukkit.dispatchCommand(
             Bukkit.getConsoleSender(),
             "codex unlock ${player.name} $codexCategory $discovery$notify",
         )
-        Bukkit.dispatchCommand(
+        val luckPermsCommand = Bukkit.dispatchCommand(
             Bukkit.getConsoleSender(),
             "lp user ${player.name} permission set $flag true",
+        )
+        logger.info(
+            "Codex 食物解鎖請求: player=${player.name}, item=${info.id}, discovery=$discovery, " +
+                "codexCommand=$codexCommand, luckPermsCommand=$luckPermsCommand",
         )
     }
 
     private fun resolveFoodInfo(item: ItemStack): FoodInfo? {
-        if (itemsAdderEnabled && itemsAdderBridge.available()) {
-            val itemsAdderId = itemsAdderBridge.namespacedId(item)
-            if (itemsAdderId != null) {
-                return itemsAdderFood[itemsAdderId]
-            }
+        val itemsAdderInfo = resolveItemsAdderFoodInfo(item)
+        if (itemsAdderInfo != null) {
+            return itemsAdderInfo
         }
 
         if (!vanillaEnabled || !usePaperFoodData) {
@@ -523,6 +546,15 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             effects,
             "vanilla",
         )
+    }
+
+    private fun resolveItemsAdderFoodInfo(item: ItemStack): FoodInfo? {
+        if (!itemsAdderEnabled || !itemsAdderBridge.available()) {
+            return null
+        }
+
+        val itemsAdderId = itemsAdderBridge.namespacedId(item)?.lowercase(Locale.ROOT) ?: return null
+        return itemsAdderFood[itemsAdderId]
     }
 
     private fun readHiddenEffectMaterials(): Set<Material> {

@@ -1,5 +1,11 @@
 # 更新紀錄
 
+## 1.2.1 - 2026-05-08
+
+### 修正
+- ItemsAdder `events.eat` 食物可能不會觸發 Bukkit `PlayerItemConsumeEvent`，因此新增右鍵 IA 食物時的 Codex 解鎖 fallback。
+- Codex 解鎖請求會寫入伺服器 log，方便確認食物 ID 與 discovery 對應是否有執行。
+
 ## 1.2.0 - 2026-05-08
 
 ### 變更
