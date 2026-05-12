@@ -80,6 +80,8 @@ codex:
 
 本專案是 OpenAI Codex 協助產生與重構的 vibe coding 作品。需求、玩法整合方向與驗證依照 TymHaven 伺服器實際情境決定；程式碼公開是為了方便檢查、修改與延伸。
 
+維護規則：任何 TymFoodLore 更新都要同步疊代到 GitHub `https://github.com/MusicTW/TymFoodLore.git`，包含 code、config、README、CHANGELOG、build 或 release 相關變更。
+
 ## 授權
 
 MIT License。詳見 [LICENSE](LICENSE)。
