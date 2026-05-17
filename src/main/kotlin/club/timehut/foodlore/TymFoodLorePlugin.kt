@@ -49,6 +49,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     private val miniMessage = MiniMessage.miniMessage()
     private val plain = PlainTextComponentSerializer.plainText()
     private val itemsAdderFood = HashMap<String, FoodInfo>()
+    private val nexoFoodByItemId = HashMap<String, FoodInfo>()
     private val effectNames = HashMap<String, String>()
     private val generatedEffectPrefixes = HashSet<String>()
     private val codexItemsAdderDiscoveries = HashMap<String, String>()
@@ -60,6 +61,8 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     private var itemsAdderEnabled = false
     private var itemsAdderContentsPath = "plugins/ItemsAdder/contents"
     private var delayedItemsAdderRescanSeconds = 0
+    private var nexoEnabled = false
+    private var nexoItemsPaths = listOf("plugins/Nexo/items")
     private var periodicScanSeconds = 0
     private var displayPosition = "bottom"
     private var blankLineBefore = true
@@ -79,6 +82,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     private var codexNotify = true
     private var periodicTaskId = -1
     private var itemsAdderBridge = ItemsAdderBridge.unavailable()
+    private var nexoBridge = NexoBridge.unavailable()
 
     override fun onEnable() {
         saveDefaultConfig()
@@ -87,7 +91,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         scheduleItemsAdderRescan()
         schedulePeriodicScan()
         runLater({ normalizeOnlinePlayers() }, 20L)
-        logger.info("TymFoodLore 已啟用。ItemsAdder 食物資料: ${itemsAdderFood.size}")
+        logger.info("TymFoodLore 已啟用。ItemsAdder 食物資料: ${itemsAdderFood.size}, Nexo 食物資料: ${nexoFoodByItemId.size}")
     }
 
     override fun onDisable() {
@@ -102,6 +106,8 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             sender.sendMessage("TymFoodLore: ${if (pluginEnabled) "enabled" else "disabled"}")
             sender.sendMessage("ItemsAdder API: ${if (itemsAdderBridge.available()) "available" else "unavailable"}")
             sender.sendMessage("ItemsAdder food entries: ${itemsAdderFood.size}")
+            sender.sendMessage("Nexo API: ${if (nexoBridge.available()) "available" else "unavailable"}")
+            sender.sendMessage("Nexo food entries: ${nexoFoodByItemId.size}")
             sender.sendMessage("Codex food unlocks: ${if (codexEnabled) codexItemsAdderDiscoveries.size else "disabled"}")
             sender.sendMessage("Vanilla food: ${if (vanillaEnabled) "enabled" else "disabled"}")
             return true
@@ -112,7 +118,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             loadSettings()
             schedulePeriodicScan()
             normalizeOnlinePlayers()
-            sender.sendMessage("TymFoodLore 已重新載入，並掃描線上玩家背包。ItemsAdder entries=${itemsAdderFood.size}")
+            sender.sendMessage("TymFoodLore 已重新載入，並掃描線上玩家背包。ItemsAdder entries=${itemsAdderFood.size}, Nexo entries=${nexoFoodByItemId.size}")
             return true
         }
 
@@ -249,6 +255,8 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         itemsAdderContentsPath = config.getString("itemsadder.contents-path", "plugins/ItemsAdder/contents")
             ?: "plugins/ItemsAdder/contents"
         delayedItemsAdderRescanSeconds = config.getInt("itemsadder.delayed-rescan-seconds", 8).coerceAtLeast(0)
+        nexoEnabled = config.getBoolean("nexo.enabled", false)
+        nexoItemsPaths = readNexoItemsPaths()
         periodicScanSeconds = config.getInt("normalization.periodic-online-player-scan-seconds", 180).coerceAtLeast(0)
         displayPosition = config.getString("display.position", "bottom") ?: "bottom"
         blankLineBefore = config.getBoolean("display.blank-line-before", true)
@@ -278,7 +286,22 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         rebuildGeneratedEffectPrefixes()
 
         itemsAdderBridge = ItemsAdderBridge.detect()
+        nexoBridge = NexoBridge.detect()
         loadItemsAdderFoodRegistry()
+        loadNexoFoodRegistry()
+    }
+
+    private fun readNexoItemsPaths(): List<String> {
+        val configuredPaths = config.getStringList("nexo.items-paths")
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        if (configuredPaths.isNotEmpty()) {
+            return configuredPaths
+        }
+
+        val singlePath = config.getString("nexo.items-path", "plugins/Nexo/items")
+            ?: "plugins/Nexo/items"
+        return listOf(singlePath.trim()).filter { it.isNotBlank() }
     }
 
     private fun loadCodexSettings() {
@@ -357,6 +380,86 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
                 itemsAdderFood[info.id.lowercase(Locale.ROOT)] = info
             }
         }
+    }
+
+    private fun loadNexoFoodRegistry() {
+        nexoFoodByItemId.clear()
+        if (!nexoEnabled) {
+            return
+        }
+
+        for (configuredPath in nexoItemsPaths) {
+            val contents = resolveServerPath(configuredPath)
+            if (!Files.isDirectory(contents)) {
+                logger.warning("Nexo items path 不存在: $contents")
+                continue
+            }
+
+            try {
+                Files.walk(contents).use { paths ->
+                    paths.filter(Files::isRegularFile)
+                        .filter { path ->
+                            val lower = path.fileName.toString().lowercase(Locale.ROOT)
+                            lower.endsWith(".yml") || lower.endsWith(".yaml")
+                        }
+                        .forEach { path -> loadNexoFoodFile(contents, path) }
+                }
+            } catch (exception: Exception) {
+                logger.warning("掃描 Nexo items 失敗: ${exception.message}")
+            }
+        }
+    }
+
+    private fun loadNexoFoodFile(root: Path, path: Path) {
+        val yaml = YamlConfiguration.loadConfiguration(path.toFile())
+        val relative = try {
+            root.relativize(path)
+        } catch (_: IllegalArgumentException) {
+            path.fileName
+        }
+        val namespace = resolveNexoNamespace(relative, path)
+
+        for (itemId in yaml.getKeys(false)) {
+            val namespacedId = if (namespace.isNullOrBlank()) itemId else "$namespace:$itemId"
+            val info = readNexoFoodInfo(namespacedId, yaml, itemId) ?: continue
+            nexoFoodByItemId[itemId.lowercase(Locale.ROOT)] = info
+            nexoFoodByItemId[info.id.lowercase(Locale.ROOT)] = info
+        }
+    }
+
+    private fun resolveNexoNamespace(relative: Path, path: Path): String? {
+        if (relative.nameCount <= 1) {
+            return path.parent?.fileName?.toString()
+        }
+
+        val first = relative.getName(0).toString()
+        return if (first.equals("itemsadder", ignoreCase = true) && relative.nameCount > 2) {
+            relative.getName(1).toString()
+        } else {
+            first
+        }
+    }
+
+    private fun readNexoFoodInfo(namespacedId: String, yaml: YamlConfiguration, base: String): FoodInfo? {
+        val nutrition = readNumber(yaml, "$base.Components.food.nutrition")
+        val saturation = readNumber(yaml, "$base.Components.food.saturation")
+        if (nutrition == null && saturation == null) {
+            return null
+        }
+
+        val effects = ArrayList<String>()
+        val applyEffects = yaml.getConfigurationSection("$base.Components.consumable.effects.APPLY_EFFECTS")
+        if (applyEffects != null) {
+            for (effectId in applyEffects.getKeys(false)) {
+                val effectPath = "$base.Components.consumable.effects.APPLY_EFFECTS.$effectId"
+                val amplifier = yaml.getInt("$effectPath.amplifier", 0)
+                val duration = yaml.getInt("$effectPath.duration", -1)
+                val probability = readNumber(yaml, "$effectPath.probability")?.toFloat() ?: 1.0f
+                effects.add(formatPotionEffect(effectId, amplifier, duration, probability))
+            }
+        }
+
+        return FoodInfo(namespacedId, nutrition, saturation, effects, "Nexo")
     }
 
     private fun readItemsAdderFoodInfo(namespacedId: String, yaml: YamlConfiguration, base: String): FoodInfo? {
@@ -517,7 +620,7 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     }
 
     private fun unlockCodexFood(player: Player, info: FoodInfo) {
-        if (info.source != "ItemsAdder") {
+        if (info.source != "ItemsAdder" && info.source != "Nexo") {
             return
         }
         val discovery = codexItemsAdderDiscoveries[info.id.lowercase(Locale.ROOT)] ?: return
@@ -567,6 +670,11 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     }
 
     private fun resolveFoodInfo(item: ItemStack): FoodInfo? {
+        val nexoInfo = resolveNexoFoodInfo(item)
+        if (nexoInfo != null) {
+            return nexoInfo
+        }
+
         val itemsAdderInfo = resolveItemsAdderFoodInfo(item)
         if (itemsAdderInfo != null) {
             return itemsAdderInfo
@@ -592,6 +700,15 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             effects,
             "vanilla",
         )
+    }
+
+    private fun resolveNexoFoodInfo(item: ItemStack): FoodInfo? {
+        if (!nexoEnabled || !nexoBridge.available()) {
+            return null
+        }
+
+        val nexoId = nexoBridge.itemId(item)?.lowercase(Locale.ROOT) ?: return null
+        return nexoFoodByItemId[nexoId]
     }
 
     private fun resolveItemsAdderFoodInfo(item: ItemStack): FoodInfo? {
@@ -828,6 +945,46 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         val effects: List<String>,
         val source: String,
     )
+
+    private class NexoBridge private constructor(
+        private val idFromItem: Method?,
+    ) {
+        fun available(): Boolean {
+            return idFromItem != null
+        }
+
+        fun itemId(item: ItemStack): String? {
+            if (!available()) {
+                return null
+            }
+            return try {
+                idFromItem!!.invoke(null, item)?.toString()?.takeIf { it.isNotBlank() }
+            } catch (_: ReflectiveOperationException) {
+                null
+            } catch (_: LinkageError) {
+                null
+            } catch (_: RuntimeException) {
+                null
+            }
+        }
+
+        companion object {
+            fun detect(): NexoBridge {
+                return try {
+                    val nexoItems = Class.forName("com.nexomc.nexo.api.NexoItems")
+                    NexoBridge(nexoItems.getMethod("idFromItem", ItemStack::class.java))
+                } catch (_: ReflectiveOperationException) {
+                    unavailable()
+                } catch (_: LinkageError) {
+                    unavailable()
+                }
+            }
+
+            fun unavailable(): NexoBridge {
+                return NexoBridge(null)
+            }
+        }
+    }
 
     private class ItemsAdderBridge private constructor(
         private val byItemStack: Method?,

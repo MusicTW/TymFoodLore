@@ -12,8 +12,14 @@ vanilla:
 itemsadder:
   enabled: true
   contents-path: plugins/ItemsAdder/contents
-  # 啟動後再掃一次，等 ItemsAdder 完成載入。
-  delayed-rescan-seconds: 8
+  # 保留 ItemsAdder 掃描能力；測試服移除 IA jar 時 API 會自動略過。
+  delayed-rescan-seconds: 0
+
+nexo:
+  enabled: true
+  items-path: plugins/Nexo/items
+  items-paths:
+    - plugins/Nexo/items
 
 codex:
   enabled: true
