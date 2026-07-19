@@ -56,6 +56,7 @@ Keywords: Minecraft plugin, Paper plugin, Spigot plugin, Bukkit plugin, Minecraf
 主要設定在 `config.yml`。
 
 Codex 解鎖由 `codex:` 區塊控制。只有列在 `codex.itemsadder-food-discoveries` 的 ItemsAdder 食物 ID 會觸發圖鑑解鎖。
+建議只登記完整料理、稀有料理或伺服器特色料理；基礎原料與製作半成品不需要成為圖鑑條目。
 
 ```yaml
 codex:
@@ -64,8 +65,8 @@ codex:
   flag-prefix: codex.flag.food_
   notify: true
   itemsadder-food-discoveries:
-    - item: iasurvival:tomato
-      discovery: ia_iasurvival_tomato
+    - item: blossom_studios:steak_burger
+      discovery: ia_blossom_studios_steak_burger
 ```
 
 ## 建置
