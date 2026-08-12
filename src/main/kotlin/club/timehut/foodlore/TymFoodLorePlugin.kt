@@ -13,11 +13,13 @@ import org.bukkit.Registry
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
+import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.FurnaceExtractEvent
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -83,11 +85,14 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
     private var periodicTaskId = -1
     private var itemsAdderBridge = ItemsAdderBridge.unavailable()
     private var nexoBridge = NexoBridge.unavailable()
+    private lateinit var foodItemSpawnListener: FoodItemSpawnListener
 
     override fun onEnable() {
         saveDefaultConfig()
         loadSettings()
+        foodItemSpawnListener = FoodItemSpawnListener(::normalizeItem)
         server.pluginManager.registerEvents(this, this)
+        server.pluginManager.registerEvents(foodItemSpawnListener, this)
         scheduleItemsAdderRescan()
         schedulePeriodicScan()
         runLater({ normalizeOnlinePlayers() }, 20L)
@@ -145,13 +150,13 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
             return
         }
         if (event.entity is Player) {
-            normalizeItem(event.item.itemStack)
+            foodItemSpawnListener.normalizeEntity(event.item)
         }
     }
 
     @EventHandler
     fun onDrop(event: PlayerDropItemEvent) {
-        normalizeItem(event.itemDrop.itemStack)
+        foodItemSpawnListener.normalizeEntity(event.itemDrop)
     }
 
     @EventHandler
@@ -1038,5 +1043,23 @@ class TymFoodLorePlugin : JavaPlugin(), Listener {
         val GENERATED_POTION_EFFECT_LEVEL_ONLY: Pattern = Pattern.compile(
             ".+$ROMAN_PATTERN",
         )
+    }
+}
+
+internal class FoodItemSpawnListener(
+    private val normalizeItem: (ItemStack?) -> Boolean,
+) : Listener {
+    @EventHandler(ignoreCancelled = true)
+    fun onItemSpawn(event: ItemSpawnEvent) {
+        normalizeEntity(event.entity)
+    }
+
+    fun normalizeEntity(itemEntity: Item): Boolean {
+        val stack = itemEntity.itemStack
+        if (!normalizeItem(stack)) {
+            return false
+        }
+        itemEntity.itemStack = stack
+        return true
     }
 }

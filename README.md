@@ -16,7 +16,7 @@ Keywords: Minecraft plugin, Paper plugin, Spigot plugin, Bukkit plugin, Minecraf
 
 - 替原版食物與 ItemsAdder 食物自動補上食物資訊 lore。
 - 從 `plugins/ItemsAdder/contents` 讀取 ItemsAdder 食物資料。
-- 在玩家撿起、合成、熔爐取出、背包移動、登入、切換手持物品與定時掃描時整理食物 lore。
+- 在食物生成於世界、玩家撿起或丟出、合成、熔爐取出、背包移動、登入、切換手持物品與定時掃描時整理食物 lore，避免相同食物因 metadata 不一致而無法堆疊。
 - 可在玩家食用指定 ItemsAdder 食物時解鎖 Codex discovery。
 - 可寫入 LuckPerms 權限旗標，避免同一個圖鑑條目重複觸發。
 
